@@ -3,30 +3,29 @@ on:
   workflow_call:
     inputs:
       artifact-name:
-        description: The name of the deployale artifact files
+        description: The name of the deployable artifact files
         required: false
         default: dist
         type: string
-  outputs:
-    result:
-      description: The result of the deployment operation
-      value: ${{ jobs.deploy.outputs.outcome }}
-  #secrets:
-  #  some-secret:
-   #   required: true
+    outputs:
+      result:
+        description: The result of the deployment operation
+        value: ${{ jobs.deploy.outputs.outcome }}
+
 jobs:
   deploy:
     outputs:
-      outcome: ${{ steps.set-result-outputs.step-result }}
+      outcome: ${{ steps.set-result-outputs.outputs.step-result }}
     runs-on: ubuntu-latest
     steps:
       - name: Get Code
         uses: actions/download-artifact@v7
         with:
-          name: ${{ inputs.artifact.name }}
+          name: ${{ inputs.artifact-name }}
       - name: List files
         run: ls
       - name: Output information
         run: echo "Deploying and uploading..." 
       - name: Set result outputs
+        id: set-result-outputs
         run: echo "step-result=success" >> $GITHUB_OUTPUT
